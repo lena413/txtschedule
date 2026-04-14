@@ -1,0 +1,2602 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="dark" name="color-scheme"/>
+<style>:root { color-scheme: dark; }
+  .today-banner {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.45s;
+  }
+
+  .today-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .today-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    background: rgba(255,45,155,0.15);
+    border: 1px solid rgba(255,45,155,0.3);
+    border-radius: 100px;
+    padding: 3px 10px;
+  }
+
+  .today-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .today-events {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .today-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+    text-decoration: none;
+  }
+
+  .today-item:hover {
+    transform: translateX(4px);
+  }
+
+  .today-item.concert { border-left: 3px solid var(--concert); }
+  .today-item.concert:hover { border-color: var(--concert); }
+  .today-item.album { border-left: 3px solid var(--album); }
+  .today-item.album:hover { border-color: var(--album); }
+  .today-item.promo { border-left: 3px solid var(--promo); }
+  .today-item.promo:hover { border-color: var(--promo); }
+  .today-item.japan { border-left: 3px solid var(--japan); }
+  .today-item.japan:hover { border-color: var(--japan); }
+  .today-item.anniversary { border-left: 3px solid var(--anniversary); }
+  .today-item.anniversary:hover { border-color: var(--anniversary); }
+
+  .today-item-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .today-item-dday {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--album);
+    flex-shrink: 0;
+    letter-spacing: -0.03em;
+    width: 52px;
+  }
+
+  .today-item-date {
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    white-space: nowrap;
+    width: 52px;
+  }
+
+  .today-item.concert .today-item-date { color: var(--concert); }
+  .today-item.album .today-item-date { color: var(--album); }
+  .today-item.promo .today-item-date { color: var(--promo); }
+  .today-item.japan .today-item-date { color: var(--japan); }
+  .today-item.anniversary .today-item-date { color: var(--anniversary); }
+
+  .today-item-time {
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .today-item-arrow {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .today-empty {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    padding: 4px 0;
+  }
+
+
+  .countdown-banner {
+    border: 1px solid rgba(170,255,0,0.3);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+    background: rgba(170,255,0,0.05);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.43s;
+  }
+
+  .countdown-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .countdown-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--album);
+    background: rgba(170,255,0,0.13);
+    border: 1px solid rgba(170,255,0,0.3);
+    border-radius: 100px;
+    padding: 3px 10px;
+  }
+
+  .countdown-title {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .countdown-blocks {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .countdown-block {
+    background: var(--card);
+    border: 1px solid rgba(170,255,0,0.2);
+    border-radius: 12px;
+    padding: 12px 18px;
+    text-align: center;
+    min-width: 64px;
+  }
+
+  .countdown-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--album);
+    line-height: 1;
+    display: block;
+  }
+
+  .countdown-unit {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-top: 4px;
+    display: block;
+  }
+
+  .countdown-done {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--album);
+    padding: 4px 0;
+  }
+
+</style>
+<title>TXT 2026 스케줄</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #0f0f0f;
+    --card: #141414;
+    --border: #282828;
+    --accent: #ff2d9b;
+    --accent2: #ff6ec7;
+    --accent3: #cc0077;
+    --text: #f0f0f0;
+    --muted: #666666;
+    --concert: #ff2d9b;   /* 형광 핑크 — 콘서트 */
+    --album: #aaff00;     /* 형광 그린 — 앨범/컴백 */
+    --promo: #f5c800;     /* 옐로우 — 프로모션 */
+    --japan: #9b5fd4;     /* 보라 — 위버스/SNS */
+    --anniversary: #9b5fd4; /* 보라 — 기념일 */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #080808 !important;
+    background-color: #080808 !important;
+    color: var(--text) !important;
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* 배경 그리드 효과 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,45,155,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(170,255,0,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 헤더 */
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 50px;
+  }
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .logo-block {}
+
+  .logo-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  h1 {
+    font-size: clamp(42px, 10vw, 80px);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  h1 .txt {
+    color: var(--accent);
+    display: block;
+  }
+
+  h1 .year {
+    color: var(--text);
+    display: block;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.35s;
+  }
+
+  .header-right {
+    text-align: right;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+
+  .member-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* 범례 */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.5s;
+    justify-content: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 100px;
+    border: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+  }
+
+  .legend-item:hover { color: var(--text); }
+  .legend-item.active { color: var(--text); border-color: var(--border); background: var(--card); }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* 타임라인 */
+  .timeline {
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 76px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  /* 이벤트 카드 */
+  .event {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .event-date {
+    width: 64px;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 20px;
+    padding-top: 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .event-dot-wrap {
+    width: 9px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    padding-top: 18px;
+    margin-left: -8px;
+    margin-right: 12px;
+  }
+
+  /* 월 섹션 */
+  .month-section {
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .month-section:nth-child(1) { animation-delay: 0.6s; }
+  .month-section:nth-child(2) { animation-delay: 0.7s; }
+  .month-section:nth-child(3) { animation-delay: 0.8s; }
+  .month-section:nth-child(4) { animation-delay: 0.9s; }
+  .month-section:nth-child(5) { animation-delay: 1.0s; }
+  .month-section:nth-child(6) { animation-delay: 1.1s; }
+
+  .month-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-left: 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .month-header:hover .month-num {
+    color: var(--accent);
+    transition: color 0.2s;
+  }
+
+  .month-toggle {
+    margin-left: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-right: 4px;
+    transition: color 0.2s;
+  }
+
+  .month-header:hover .month-toggle {
+    color: var(--accent);
+  }
+
+  .toggle-arrow {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-size: 10px;
+  }
+
+  .month-section.collapsed .toggle-arrow {
+    transform: rotate(-90deg);
+  }
+
+  .month-section.collapsed .month-num {
+    color: var(--muted);
+  }
+
+  .month-events {
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    max-height: 9999px;
+    opacity: 1;
+  }
+
+  .month-section.collapsed .month-events {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  .month-section.collapsed {
+    margin-bottom: 16px;
+  }
+
+  /* 지난 달 배지 */
+  .past-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 2px 8px;
+    letter-spacing: 0.1em;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .month-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--border);
+    line-height: 1;
+    width: 80px;
+    flex-shrink: 0;
+    text-align: right;
+    letter-spacing: -0.05em;
+  }
+
+  .month-name {
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    padding-left: 24px;
+  }
+
+  /* 이벤트 카드 */
+
+  .event-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .event-card {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-left: 16px;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+
+  .event-card:hover {
+    transform: translateX(4px);
+  }
+
+  .event-card.concert { border-left: 3px solid var(--concert); }
+  .event-card.album { border-left: 3px solid var(--album); }
+  .event-card.promo { border-left: 3px solid var(--promo); }
+  .event-card.japan { border-left: 3px solid var(--japan); }
+
+  .event-card.concert:hover { border-color: var(--concert); }
+  .event-card.album:hover { border-color: var(--album); }
+  .event-card.promo:hover { border-color: var(--promo); }
+  .event-card.japan:hover { border-color: var(--japan); }
+
+  .event-dot.concert { border-color: var(--concert); }
+  .event-dot.album { border-color: var(--album); }
+  .event-dot.promo { border-color: var(--promo); }
+  .event-dot.japan { border-color: var(--japan); }
+
+  .event-type-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  .event-card.album.comeback {
+    background: rgba(170,255,0,0.12);
+    border: 2px solid rgba(170,255,0,0.7);
+    border-left: 3px solid var(--album);
+    box-shadow: 0 0 24px rgba(170,255,0,0.25), inset 0 0 30px rgba(170,255,0,0.08);
+  }
+
+  .event-card.album.comeback .event-title {
+    color: var(--album);
+  }
+
+  .event-card.anniversary {
+    background: rgba(155,95,212,0.15);
+    border: 2px solid rgba(155,95,212,0.6);
+    border-left: 3px solid var(--anniversary);
+    box-shadow: 0 0 24px rgba(155,95,212,0.2), inset 0 0 30px rgba(155,95,212,0.08);
+  }
+
+  .event-card.anniversary .event-title {
+    color: var(--anniversary);
+  }
+
+  .event-dot.anniversary { border-color: var(--anniversary); }
+  .badge-anniversary { background: rgba(155,95,212,0.15); color: var(--anniversary); }
+  .badge-concert { background: rgba(255,45,155,0.25); color: #ff2d9b; border: 1px solid rgba(255,45,155,0.45); }
+  .badge-album { background: rgba(170,255,0,0.13); color: var(--album); }
+  .badge-promo { background: rgba(245,200,0,0.13); color: var(--promo); }
+  .badge-japan { background: rgba(155,95,212,0.15); color: var(--japan); }
+
+  .event-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .event-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .event-desc strong {
+    color: var(--text);
+  }
+
+  .multi-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* 필터 바 */
+  .filter-bar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    flex-wrap: wrap;
+  }
+
+  .filter-bar.active {
+    display: flex;
+  }
+
+  .filter-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .filter-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(255,45,155,0.15);
+    border: 1px solid rgba(255,45,155,0.3);
+    border-radius: 100px;
+    padding: 3px 10px;
+  }
+
+  .filter-clear {
+    margin-left: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    background: none;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .filter-clear:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+
+  /* 해시태그 클릭 가능 스타일 */
+  .hashtag {
+    cursor: pointer;
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+
+  .hashtag:hover {
+    color: var(--text);
+  }
+
+  /* 필터링된 카드 숨김 */
+  .event.hidden {
+    display: none;
+  }
+
+  .month-section.all-hidden {
+    display: none;
+  }
+  .highlight-banner {
+    background: linear-gradient(135deg, rgba(255,45,155,0.1), rgba(170,255,0,0.05));
+    border: 1px solid rgba(255,45,155,0.25);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 50px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.5s;
+  }
+
+  .banner-icon {
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  .banner-text {}
+
+  .banner-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .banner-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* 링크 */
+  .event-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .event-link:hover { opacity: 1; }
+
+  /* 추가 뱃지 */
+  .badge-solo { background: rgba(155,95,212,0.15); color: var(--japan); }
+
+  /* 푸터 */
+  footer {
+    margin-top: 60px;
+    padding: 30px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .footer-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .footer-text span {
+    color: var(--accent);
+  }
+
+  /* 애니메이션 */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 반응형 */
+  @media (max-width: 600px) {
+    .timeline::before { left: 76px; }
+    .month-num { font-size: 36px; width: 80px; }
+    .event-date { width: 80px; font-size: 10px; }
+    .header-right { display: none; }
+    h1 { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<div class="header-inner">
+<div class="logo-block">
+<div class="logo-tag">TOMORROW X TOGETHER</div>
+<h1>
+<span class="txt">TXT</span>
+<span class="year">2026</span>
+</h1>
+<div class="subtitle">SCHEDULE · 스케줄 정리</div>
+</div>
+<div class="header-right">
+<div class="member-pills">
+<span class="pill">수빈</span>
+<span class="pill">연준</span>
+<span class="pill">범규</span>
+<span class="pill">태현</span>
+<span class="pill">휴닝카이</span>
+</div>
+<div class="subtitle" style="text-align:right">MOA ♡</div>
+</div>
+</div>
+</header>
+<!-- 하이라이트 배너 -->
+
+<div class="today-banner" id="todayBanner">
+  <div class="today-header">
+    <span class="today-label">UPCOMING</span>
+    <span class="today-date" id="todayDate"></span>
+  </div>
+  <div class="today-events" id="todayEvents">
+    <div class="today-empty">오늘 스케줄이 없어요 🌙</div>
+  </div>
+</div>
+
+  
+  <div id="countdownBlocks" class="countdown-blocks"></div>
+</div>
+
+
+<!-- 필터 바 -->
+<div class="filter-bar" id="filterBar">
+<span class="filter-label">FILTER</span>
+<span class="filter-tag" id="filterTag"></span>
+<button class="filter-clear" id="filterClear">✕ 전체보기</button>
+</div>
+<!-- 범례 -->
+<div class="legend">
+<div class="legend-item" data-category="concert">
+<div class="legend-dot" style="background:var(--concert)"></div>
+      콘서트/공연
+    </div>
+<div class="legend-item" data-category="album">
+<div class="legend-dot" style="background:var(--album)"></div>
+      앨범/컴백
+    </div>
+<div class="legend-item" data-category="promo">
+<div class="legend-dot" style="background:var(--promo)"></div>
+      프로모션/콘텐츠
+    </div>
+<div class="legend-item" data-category="japan">
+<div class="legend-dot" style="background:var(--japan)"></div>
+      위버스/SNS
+    </div>
+</div>
+<!-- 타임라인 -->
+<div class="timeline" id="timeline">
+</div>
+
+<footer>
+<div class="footer-text">
+      TXT 2026 SCHEDULE · 업데이트 기준 <span>2026.04.10</span> · MOA ♡
+    </div>
+</footer>
+</div>
+
+<script id="event-data-script">
+// =============================================
+// 이벤트 데이터 — 여기만 수정하면 됩니다!
+// =============================================
+const MONTHS_CONFIG = [
+  { month: 1,  num: '01', name: 'January',   collapsed: true },
+  { month: 2,  num: '02', name: 'February',  collapsed: true },
+  { month: 3,  num: '03', name: 'March',     collapsed: true },
+  { month: 4,  num: '04', name: 'April',     collapsed: false, now: true },
+  { month: 5,  num: '05', name: 'May',       collapsed: false },
+  { month: 6,  num: '06', name: 'June',      collapsed: false },
+  { month: 7,  num: '07', name: 'July',      collapsed: false },
+  { month: 8,  num: '08', name: 'August',    collapsed: true },
+  { month: 9,  num: '09', name: 'September', collapsed: true },
+  { month: 12, num: '12', name: 'December',  collapsed: true },
+];
+
+const EVENTS = [
+  {
+    "month": 1,
+    "date": "1.1",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "'Talk to You' Relay Performance w/ WOONHAK of BOYNEXTDOOR",
+    "desc": "오후 10:00 · #연준 · #NO LABELS: PART 01",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/_2QoId0xjUc?si=wHgK7XJymf6hHSEB"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.5",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "친구 후보 3. 파트리샤 | 휴닝카이 친구들도 첨벙첨벙 🌊",
+    "desc": "오후 9:00 · #휴닝카이 친구들도 첨벙첨벙 · #휴닝카이",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/-Xq7x_Fwx_w?si=B2JjSKaVLauVuezd"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.9",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "'Talk to You' Relay Performance w/ HONG EUNCHAE of LE SSERAFIM",
+    "desc": "오후 10:00 · #연준 · #NO LABELS: PART 01",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/q3l7Uauk7x4?si=08PPOQUidHJL0XmQ"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.9–11",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "WORLD TOUR <ACT : TOMORROW> IN HONG KONG",
+    "desc": "AsiaWorld-Arena · Day 1 오후 8:00 / Day 2 오후 7:00 / Day 3 오후 6:00 · #ACT: TOMORROW",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.11",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "'Talk to You' Relay Performance w/ IROHA of ILLIT",
+    "desc": "오후 10:00 · #연준 · #NO LABELS: PART 01",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/xVaFUHERdfE?si=h477hSDR2IKXTSTi"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.12",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "미쳐 날뛰고 있습니다 | [TO DO X TXT] EP.165",
+    "desc": "오후 9:00 · #TODO X TXT",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/-lqFuhB3Jqg?si=ulwVo3ynsuug3Cuh"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.13",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "BEOMGYU's 'I Love You' (Original Song: Yutaka Ozaki)",
+    "desc": "오후 6:00 · #COVER · #범규",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/3y743h28quI?si=QoeB5j6rV7s7o5HB"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.17–18",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "WORLD TOUR <ACT : TOMORROW> IN SINGAPORE",
+    "desc": "Singapore Indoor Stadium · Day 1 / Day 2 · #ACT: TOMORROW",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.19",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "누구랑 결혼할래? | [TO DO X TXT] EP.166",
+    "desc": "오후 9:00 · #TODO X TXT",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/NpAyXv8Fxdo?si=Dx9Eetxg3qP84oi3"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.21–22",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "WORLD TOUR <ACT : TOMORROW> IN TOKYO",
+    "desc": "Tokyo Dome · Day 1 오후 6:00 / Day 2 오후 6:00 · #ACT: TOMORROW",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.26",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "잠 안 자면 잘 시간 추가 | [TO DO X TXT] EP.167",
+    "desc": "오후 9:00 · #TODO X TXT",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/o8Z5Fdn2ER4?si=_b22Ry93_TMktfaa"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.26",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "'Talk to You' Relay Performance w/ NI-KI of ENHYPEN",
+    "desc": "오후 10:00 · #연준 · #NO LABELS: PART 01",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/f3oSpeuntB0?si=UesMPZUNzaeQuF_v"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 1,
+    "date": "1.31–2.1",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "WORLD TOUR <ACT : TOMORROW> IN TAIPEI",
+    "desc": "Taipei Dome · Day 1 오후 6:00 / Day 2 오후 5:00 · #ACT: TOMORROW",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.2",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "대학 가면 이런 선배 있나요? | [TO DO X TXT] EP.168",
+    "desc": "오후 9:00 · #TODO X TXT",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/YRtEY7d_luQ?si=7cEdrXMcU89QIbrz"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.5",
+    "category": "anniversary",
+    "badge": "",
+    "title": "HAPPY TAEHYUN DAY 🍓",
+    "desc": "#태현 · #생일",
+    "links": [
+      {
+        "text": "공식X",
+        "url": "https://x.com/txt_bighit/status/2019063521074725053?s=46"
+      },
+      {
+        "text": "수빈",
+        "url": "https://x.com/txt_members/status/2019065407902986590?s=46"
+      },
+      {
+        "text": "연준",
+        "url": "https://x.com/txt_members/status/2019081298141405350?s=46"
+      },
+      {
+        "text": "범규",
+        "url": "https://x.com/txt_members/status/2019085315349131624?s=46"
+      },
+      {
+        "text": "휴닝카이",
+        "url": "https://x.com/txt_members/status/2019281799139193046?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.5",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "\"니↗가 뭘 알겟니↘🙄\" 드잡이가 난무하는 케이팝 고인물 노가리 l TXT 수빈 l 부승관의 비비디바비디부",
+    "desc": "오후 7:00 · #수빈 · #비비디바비디부",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/xaSza05yPTw?si=awoCCUTziZZf0uND"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.7–8",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "WORLD TOUR <ACT : TOMORROW> IN OSAKA",
+    "desc": "Kyocera Dome Osaka · Day 1 오후 5:00 / Day 2 오후 4:30 · #ACT: TOMORROW",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.9",
+    "category": "album",
+    "badge": "M/V",
+    "title": "'SSS (Sending Secret Signals) (feat. HYDE)' Official MV",
+    "desc": "오전 0:00 · #Starkissed",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/vlmXpQOE75c?si=CKEia5hxfmpniG0N"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.9",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "new 입덕 가이드 | [TO DO X TXT] EP.169",
+    "desc": "오후 9:00 · #TODO X TXT",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/igSU56f3msQ?si=neL_Nfyx2FtKYmC6"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.14",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "WORLD TOUR <ACT : TOMORROW> IN KUALA LUMPUR",
+    "desc": "Axiata Arena · 쿠알라룸푸르 · 오후 6시 · 투어 마지막 공연 · #ACT: TOMORROW",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.16",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "투두 쫀득 쿠키 영상",
+    "desc": "오후 9:00 · #TODO X TXT",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/ydn2Ii6W8Do?si=9m6B5RTM0wjYVre-"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.20",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "[2026 DREAM WEEK] OUR FIRST PAGE",
+    "desc": "오후 6:00 · #DREAM WEEK",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/RsP3ycsFzZ0?si=zIdK1dxIS9dDQRA_"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.21",
+    "category": "promo",
+    "badge": "PHOTO",
+    "title": "[2026 DREAM WEEK] DREAMGRAPHY",
+    "desc": "오전 0:00 · #DREAM WEEK",
+    "links": [
+      {
+        "text": "→ 위버스 바로가기",
+        "url": "https://weverse.io/txt/media/2-170192419?hl=ko"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.23",
+    "category": "promo",
+    "badge": "INTERVIEW",
+    "title": "[2026 DREAM WEEK] 2026.txt",
+    "desc": "오전 0:00 · #DREAM WEEK · #인터뷰",
+    "links": [
+      {
+        "text": "→ 위버스 바로가기",
+        "url": "https://weverse.io/txt/media/3-221239564?hl=ko"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.24",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "[2026 DREAM WEEK] ASMR (Good VS Bad ver.)",
+    "desc": "오전 0:00 · #DREAM WEEK · #ASMR",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/8SSdAKIcBPk?si=HLvzgvNSIFshNMFj"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.25",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "[2026 DREAM WEEK] ASMR (Basic ver.)",
+    "desc": "오전 0:00 · #DREAM WEEK · #ASMR",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/lKuYRYwGSJg?si=hj1Mx0FBA7maUQTU"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.26",
+    "category": "promo",
+    "badge": "VIDEO",
+    "title": "[2026 DREAM WEEK] DAY & NIGHT Medley Live",
+    "desc": "오전 0:00 · #DREAM WEEK · #LIVE CLIP · #LIVE CLIP",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/EUERJYKCzWU?si=R9SKIdWpjX-CNVeD"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 2,
+    "date": "2.27–3.1",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "2026 TXT MOA CON",
+    "desc": "KSPO DOME · Day 1 오후 7:00 / Day 2 오후 6:00 / Day 3 오후 5:00 · #MOA CON",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.2",
+    "category": "album",
+    "badge": "CONCEPT FILM",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - PRELUDE: 가시나무",
+    "desc": "오전 0:00 · #CONCEPT FILM · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/qUnbPt4bows?si=HCbj7VdBLX3jQxY-"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.2",
+    "category": "album",
+    "badge": "Concept Photo",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - THORN",
+    "desc": "오전 0:00 · #CONCEPT PHOTO · #THORN · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/i/status/2028123121195405590"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.3",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "[2026 DREAM WEEK] TXT Diary",
+    "desc": "오전 0:00 · #DREAM WEEK",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/xVNzPMTgc60?si=ipLbQiL5qBo75IJ5"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.3",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "[리무진서비스] EP.204 투모로우바이투게더 연준 | Let Me Tell You, 책방오빠 문학소녀, 처음 느낌 그대로",
+    "desc": "오후 5:00 · #연준 · #리무진서비스",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/DucXv5xjhW4"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.4",
+    "category": "anniversary",
+    "badge": "",
+    "title": "HAPPY TXT DAY 💙",
+    "desc": "데뷔 7주년 · 2019.03.04",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/i/status/2028847872339251683"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.4",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "[2026 DREAM WEEK] 1년차 vs 8년차 | 별의 목소리",
+    "desc": "오전 0:00 · #DREAM WEEK",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/rew9G9qrzNY?si=D_xgKZ-mamZ7Vxnm"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.5–7",
+    "category": "album",
+    "badge": "PROMOTION",
+    "title": "A Moment of Stillness in the Thorns 展",
+    "desc": "오전 11:00–오후 7:00 · 서울 성동구 성수동2가 273-13 (에스팩토리 D동) · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/bighit_music/status/2028304293732966828?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.5",
+    "category": "album",
+    "badge": "PROMOTION",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - Promotion Scheduler",
+    "desc": "오전 0:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/bighit_music/status/2029210261094318427?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.6",
+    "category": "album",
+    "badge": "NEW SONG",
+    "title": "Make It Count",
+    "desc": "Becky G, YEONJUN, Myke Towers · #연준",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/txt_bighit/status/2029695452522893573?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.10",
+    "category": "promo",
+    "badge": "FASHION SHOW",
+    "title": "Miu Miu Fall/Winter 2026 Fashion Show",
+    "desc": "오후 10:00 · #연준 · #MIUMIU",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://www.youtube.com/live/BmX4N575SBw?si=dsGUXtk8pf_0PFDT"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.13",
+    "category": "anniversary",
+    "badge": "",
+    "title": "HAPPY BEOMGYU DAY 🎂",
+    "desc": "#범규 · #생일",
+    "links": [
+      {
+        "text": "공식X",
+        "url": "https://x.com/txt_bighit/status/2032109365801730407?s=46"
+      },
+      {
+        "text": "수빈",
+        "url": "https://x.com/i/status/2032138093835550785"
+      },
+      {
+        "text": "연준",
+        "url": "https://x.com/txt_members/status/2032315800129061248?s=46"
+      },
+      {
+        "text": "태현",
+        "url": "https://x.com/i/status/2032242344951759302"
+      },
+      {
+        "text": "휴닝카이",
+        "url": "https://x.com/txt_members/status/2032110739792838903?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.13",
+    "category": "album",
+    "badge": "PROMOTION",
+    "title": "ANTI-ANXIETY CLUB Now Open!",
+    "desc": "오전 11:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/txt_bighit/status/2032275457484415218?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.20",
+    "category": "album",
+    "badge": "NEW SONG",
+    "title": "기억속 켜진불",
+    "desc": "오후 6:00 · #수빈 · #OST",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/txt_bighit/status/2034918431141896433?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.26",
+    "category": "album",
+    "badge": "NEW SONG",
+    "title": "Breaking Through",
+    "desc": "EL CAPITXN, TAEHYUN, Jeremy Zucker · 오전 0:00 · #태현",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/txt_bighit/status/2036821505842237765?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.27",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "연준이 여기서 왜 나와? | 투모로우바이투게더 연준 초대석",
+    "desc": "오후 7:00 · #연준 · #룩삼초대석",
+    "links": [
+      {
+        "text": "→ 유튜브 다시보기",
+        "url": "https://youtu.be/VlLZDfCm2zQ?si=0ubLhVbIKyheeF0u"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.29",
+    "category": "album",
+    "badge": "Concept Photo",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - HUNGER",
+    "desc": "오전 0:00 · #CONCEPT PHOTO · #HUNGER · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/bighit_music/status/2037907567368876219?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.31",
+    "category": "album",
+    "badge": "Concept Photo",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - TENSION",
+    "desc": "오전 0:00 · #CONCEPT PHOTO · #TENSION · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/BIGHIT_MUSIC/status/2038632351522300327"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.31",
+    "category": "album",
+    "badge": "ALBUM",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - Album Preview Event",
+    "desc": "율 뮤직 · 성수이로16길 · 1회차 2:30 / 2회차 4:00 / 3회차 5:30 PM · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 위버스 공지 바로가기",
+        "url": "https://weverse.io/txt/notice/34450"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 3,
+    "date": "3.31",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "8년 차 아이돌 가사조사 나왔습니다 | EP. 133 TXT 수빈 연준 | 살롱드립",
+    "desc": "오후 6:00 · #수빈 · #연준 · #살롱드립",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/46mptRPES_k?si=dNlrSE2uQWaFc3Tc"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.2",
+    "category": "album",
+    "badge": "Concept Photo",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - ANXIETY",
+    "desc": "오전 0:00 · #CONCEPT PHOTO · #ANXIETY · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/bighit_music/status/2039357155082743926?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.3",
+    "category": "album",
+    "badge": "Concept Film",
+    "title": "A Thorn: Untold Stories",
+    "desc": "오전 0:00 · #CONCEPT FILM · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://www.youtube.com/watch?v=e3B1rT77Zhc"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.5",
+    "category": "album",
+    "badge": "ALBUM",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - Tracklist",
+    "desc": "오전 0:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 위버스 바로가기",
+        "url": "https://weverse.io/txt/media/4-225289219"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.5",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "KT 위즈 시구",
+    "desc": "수원 KT 위즈 파크 · 삼성 vs KT · 오후 2:00 · #태현",
+    "links": [
+      {
+        "text": "오늘의TXT",
+        "url": "https://x.com/txt_bighit/status/2040695641295429690?s=46"
+      },
+      {
+        "text": "쇼츠",
+        "url": "https://youtube.com/shorts/fO3mQWvu-rs"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.5",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "무서운게 딱 싫어",
+    "desc": "유병재 라이브 방송 · 오후 7:00 · #수빈",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.6",
+    "category": "album",
+    "badge": "ALBUM",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - Preview",
+    "desc": "오전 0:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/U3_A8i4zIis?si=hponqxgc1Rubm3l-"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.9–10",
+    "category": "album",
+    "badge": "PROMOTION",
+    "title": "하루에 하루만 더 Listening Booth",
+    "desc": "성수역 3번 출구 앞 공중전화 · 서울 성동구 아차산로 116 1층 · 11:00–19:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/i/status/2042384563251417450"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.10",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "집대성 EP.103",
+    "desc": "오후 6:00 · #집대성",
+    "links": [
+      {
+        "text": "→ 예고편 바로가기",
+        "url": "https://youtube.com/shorts/pD1cbee2_TQ"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.11–12",
+    "category": "album",
+    "badge": "PROMOTION",
+    "title": "하루에 하루만 더 Listening Booth (연장)",
+    "desc": "뚝섬역 사거리 앞 · 서울 성동구 왕십리로 114 · 11:00–19:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/txt_bighit/status/2042482716172829045?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.11",
+    "category": "album",
+    "badge": "ALBUM",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - MV Teaser",
+    "desc": "오전 0:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.12",
+    "category": "japan",
+    "badge": "LIVE",
+    "title": "도우인 공식 라이브 스트리밍",
+    "desc": "오후 3:30 (KST) · #연준 · #휴닝카이",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.13",
+    "category": "album",
+    "badge": "ALBUM",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - 발매",
+    "desc": "미니 8집 · 오후 6:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/TXT_bighit"
+      }
+    ],
+    "comeback": true
+  },
+  {
+    "month": 4,
+    "date": "4.13",
+    "category": "album",
+    "badge": "SHOWCASE",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - 컴백 쇼케이스",
+    "desc": "오후 8:00 · 고려대학교 화정체육관 · 온·오프라인 동시 진행 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 위버스 공지 바로가기",
+        "url": "https://weverse.io/txt/notice/34002"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.14–26",
+    "category": "album",
+    "badge": "POP-UP STORE",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - POP-UP STORE",
+    "desc": "서울 용산구 한강대로 42, 1F · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/i/status/2041335149497881052"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.14",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "D+1 컴백라이브",
+    "desc": "오후 8:00",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/txt_bighit/status/2043683120470188306?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.15",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "픽시드 (PIXID)",
+    "desc": "오후 6:00 · #범규 · #휴닝카이",
+    "links": [
+      {
+        "text": "→ 공식 X 바로가기",
+        "url": "https://x.com/pixid_official/status/2043509478331670809?s=46"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.15",
+    "category": "album",
+    "badge": "FAN SIGNING",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - 팬사인회",
+    "desc": "블루드림미디어 · 오후 7:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 위버스 공지 바로가기",
+        "url": "https://weverse.io/txt/notice/34557"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.16",
+    "category": "album",
+    "badge": "BROADCAST",
+    "title": "엠카운트다운",
+    "desc": "Mnet · 오후 6:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.17",
+    "category": "promo",
+    "badge": "RADIO",
+    "title": "이은지의 가요광장",
+    "desc": "KBS Cool FM · 오후 12:00",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.17",
+    "category": "album",
+    "badge": "BROADCAST",
+    "title": "뮤직뱅크",
+    "desc": "KBS2 · 오후 4:55 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.17",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "유브이 녹음실",
+    "desc": "오후 6:00",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.18",
+    "category": "album",
+    "badge": "BROADCAST",
+    "title": "쇼! 음악중심",
+    "desc": "MBC · 오후 3:20 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.18",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "아이돌 인간극장",
+    "desc": "오후 9:00",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.19",
+    "category": "album",
+    "badge": "BROADCAST",
+    "title": "인기가요",
+    "desc": "SBS · 오후 3:20 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.19",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "사장님귀는당나귀귀",
+    "desc": "KBS2 · 오후 4:40",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.19",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "매점가요",
+    "desc": "오후 7:00",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.20",
+    "category": "album",
+    "badge": "FAN SIGNING",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - 팬사인회",
+    "desc": "Weverse Global · 영상통화 오후 6:00 / 대면 오후 8:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 위버스 공지 바로가기",
+        "url": "https://weverse.io/txt/notice/33900"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.21",
+    "category": "album",
+    "badge": "FAN SIGNING",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - 팬사인회",
+    "desc": "오후 6:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [
+      {
+        "text": "→ 위버스 공지 바로가기",
+        "url": "https://weverse.io/txt/notice/34559?hl=ko"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.21",
+    "category": "promo",
+    "badge": "RADIO",
+    "title": "MBC FM4U 김이나의 별이 빛나는 밤에",
+    "desc": "MBC FM4U · 오후 8:00",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.22",
+    "category": "album",
+    "badge": "PHOTO EVENT",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - 포토 이벤트",
+    "desc": "#위드뮤 · 오후 7:30",
+    "links": [
+      {
+        "text": "→ 위버스 공지 바로가기",
+        "url": "https://weverse.io/txt/notice/34560"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.22",
+    "category": "album",
+    "badge": "FAN SIGNING",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - 팬사인회",
+    "desc": "#위드뮤 · 오후 9:00",
+    "links": [
+      {
+        "text": "→ 위버스 공지 바로가기",
+        "url": "https://weverse.io/txt/notice/34615"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.23",
+    "category": "album",
+    "badge": "BROADCAST",
+    "title": "엠카운트다운",
+    "desc": "Mnet · 오후 6:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.24",
+    "category": "album",
+    "badge": "BROADCAST",
+    "title": "뮤직뱅크",
+    "desc": "KBS2 · 오후 4:55 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.24",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "할명수",
+    "desc": "오후 5:30",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.25",
+    "category": "album",
+    "badge": "BROADCAST",
+    "title": "쇼! 음악중심",
+    "desc": "MBC · 오후 3:20 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.26",
+    "category": "album",
+    "badge": "BROADCAST",
+    "title": "인기가요",
+    "desc": "SBS · 오후 3:20 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.26",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "사장님귀는당나귀귀",
+    "desc": "KBS2 · 오후 4:40",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.1",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.1",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [
+      {
+        "text": "→ 예고편 바로가기",
+        "url": "https://x.com/i/status/2042384563251417450"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.4",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "짠한형 신동엽",
+    "desc": "오후 7:00",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.8",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.2",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.12",
+    "category": "promo",
+    "badge": "TV",
+    "title": "킬잇 : 스타일 크리에이터 대전쟁",
+    "desc": "tvN · 오후 10:10 · #연준",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.15",
+    "category": "promo",
+    "badge": "PROMOTION",
+    "title": "이슬라이브",
+    "desc": "",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.15",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.3",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.22",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.4",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.23–24",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "MOA CON IN JAPAN — 아이치",
+    "desc": "IG Arena · Day 1 오후 5:00 / Day 2 오후 4:00 · #MOA CON",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.27–28",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "MOA CON IN JAPAN — 치바",
+    "desc": "LaLa arena TOKYO-BAY · Day 1 오후 7:00 / Day 2 오후 6:00 · #MOA CON",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 5,
+    "date": "5.29",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.5",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 6,
+    "date": "6.5",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.6",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 6,
+    "date": "6.12",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.7",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 6,
+    "date": "6.16–17",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "MOA CON IN JAPAN — 후쿠오카",
+    "desc": "MARINE MESSE FUKUOKA Hall A · Day 1 오후 7:00 / Day 2 오후 6:00 · #MOA CON",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 6,
+    "date": "6.19",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.8",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 6,
+    "date": "6.23–24",
+    "category": "concert",
+    "badge": "CONCERT",
+    "title": "MOA CON IN JAPAN — 효고",
+    "desc": "GLION ARENA KOBE · Day 1 오후 7:00 / Day 2 오후 6:00 · #MOA CON",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 6,
+    "date": "6.26",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.9",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 7,
+    "date": "7.3",
+    "category": "promo",
+    "badge": "CONTENTS",
+    "title": "TXT의 육아일기 EP.10",
+    "desc": "웨이브(Wavve) · #TXT의 육아일기",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 8,
+    "date": "8.14",
+    "category": "anniversary",
+    "badge": "",
+    "title": "HAPPY HUENINGKAI DAY 🐧",
+    "desc": "#휴닝카이 · #생일",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 8,
+    "date": "8.22",
+    "category": "anniversary",
+    "badge": "",
+    "title": "HAPPY MOA DAY 💙",
+    "desc": "팬덤명 발표 기념일 · 2019.08.22",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 9,
+    "date": "9.13",
+    "category": "anniversary",
+    "badge": "",
+    "title": "HAPPY YEONJUN DAY 🦊",
+    "desc": "#연준 · #생일",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 12,
+    "date": "12.5",
+    "category": "anniversary",
+    "badge": "",
+    "title": "HAPPY SOOBIN DAY 🐰",
+    "desc": "#수빈 · #생일",
+    "links": [],
+    "comeback": false
+  }
+];
+
+// =============================================
+// 렌더링 — 수정 불필요
+// =============================================
+(function() {
+  const timeline = document.getElementById('timeline');
+
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  MONTHS_CONFIG.forEach(function(mc) {
+    const monthEvents = EVENTS.filter(function(e) { return e.month === mc.month; });
+    if (monthEvents.length === 0) return;
+
+    const section = el('div', 'month-section' + (mc.collapsed ? ' collapsed' : ''));
+    section.dataset.month = mc.month;
+
+    const header = el('div', 'month-header');
+    const numDiv = el('div', 'month-num', mc.num);
+    const nameDiv = el('div', 'month-name', mc.name);
+    if (mc.now) {
+      const nowSpan = el('span', null, '● NOW');
+      nowSpan.style.cssText = "color:var(--accent);font-size:10px;font-family:'Space Mono',monospace;letter-spacing:0.1em;margin-left:8px";
+      nameDiv.appendChild(nowSpan);
+    }
+    const toggleDiv = el('div', 'month-toggle');
+    const arrow = el('span', 'toggle-arrow', '▼');
+    toggleDiv.appendChild(arrow);
+    header.appendChild(numDiv);
+    header.appendChild(nameDiv);
+    header.appendChild(toggleDiv);
+    section.appendChild(header);
+
+    const eventsContainer = el('div', 'month-events');
+    let lastDate = '';
+
+    monthEvents.forEach(function(ev, i) {
+      const dateToShow = (ev.date && ev.date !== lastDate) ? ev.date : '';
+      if (ev.date) lastDate = ev.date;
+
+      const eventDiv = el('div', 'event');
+
+      const dateDiv = el('div', 'event-date', dateToShow);
+      dateDiv.dataset.original = ev.date || '';
+      const dotWrap = el('div', 'event-dot-wrap');
+      const dot = el('div', 'event-dot ' + ev.category);
+      dotWrap.appendChild(dot);
+
+      const cardClass = 'event-card ' + ev.category + (ev.comeback ? ' comeback' : '');
+      const card = el('div', cardClass);
+
+      if (ev.badge) {
+        const badge = el('span', 'event-type-badge badge-' + ev.category, ev.badge);
+        card.appendChild(badge);
+      }
+
+      const titleDiv = el('div', 'event-title', ev.title);
+      card.appendChild(titleDiv);
+
+      if (ev.desc) {
+        const descDiv = el('div', 'event-desc', ev.desc);
+        card.appendChild(descDiv);
+      }
+
+      (ev.links || []).forEach(function(l) {
+        const a = el('a', 'event-link', l.text);
+        a.href = l.url;
+        a.target = '_blank';
+        card.appendChild(a);
+      });
+
+      eventDiv.appendChild(dateDiv);
+      eventDiv.appendChild(dotWrap);
+      eventDiv.appendChild(card);
+      eventsContainer.appendChild(eventDiv);
+    });
+
+    section.appendChild(eventsContainer);
+    timeline.appendChild(section);
+  });
+})();
+</script>
+
+<script>
+  // 월 접기/펼치기
+  document.querySelectorAll('.month-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const section = header.closest('.month-section');
+      section.classList.toggle('collapsed');
+    });
+  });
+
+  // 해시태그 파싱 및 클릭 가능하게 변환
+  document.querySelectorAll('.event-desc').forEach(desc => {
+    desc.innerHTML = desc.innerHTML.replace(/(#[^#<·\n]+?)(?=\s*(?:·|<|#|$))/g, '<span class="hashtag">$1</span>');
+  });
+
+  // 모든 카드에 data-date 자동 채우기
+  let lastDate = '';
+  document.querySelectorAll('.event').forEach(event => {
+    const dateEl = event.querySelector('.event-date');
+    if (dateEl) {
+      if (dateEl.textContent.trim()) lastDate = dateEl.textContent.trim();
+      event.dataset.date = lastDate;
+    }
+  });
+
+  // 필터 기능
+  const filterBar = document.getElementById('filterBar');
+  const filterTag = document.getElementById('filterTag');
+  const filterClear = document.getElementById('filterClear');
+  let activeFilter = null;
+
+  document.addEventListener('click', e => {
+    if (!e.target.classList.contains('hashtag')) return;
+    applyFilter(e.target.textContent.trim());
+  });
+
+  filterClear.addEventListener('click', clearFilter);
+
+  // 범례 클릭 필터링
+  document.querySelectorAll('.legend-item[data-category]').forEach(item => {
+    item.addEventListener('click', () => {
+      const cat = item.dataset.category;
+      if (item.classList.contains('active')) {
+        clearFilter();
+      } else {
+        document.querySelectorAll('.legend-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        // 카테고리로 필터링
+        document.querySelectorAll('.event').forEach(ev => {
+          const card = ev.querySelector('.event-card');
+          const hasClass = card && card.classList.contains(cat);
+          ev.classList.toggle('hidden', !hasClass);
+        });
+        document.querySelectorAll('.month-section').forEach(section => {
+          const visibleEvents = section.querySelectorAll('.event:not(.hidden)');
+          section.classList.toggle('all-hidden', visibleEvents.length === 0);
+          if (visibleEvents.length > 0) section.classList.remove('collapsed');
+        });
+        updateDateDisplay();
+        // 필터바 숨기기 (범례가 대신함)
+        filterBar.classList.remove('active');
+        activeFilter = null;
+      }
+    });
+  });
+
+  function updateDateDisplay() {
+    let lastVisibleDate = '';
+    document.querySelectorAll('.event').forEach(event => {
+      const dateEl = event.querySelector('.event-date');
+      if (!dateEl) return;
+      const cardDate = event.dataset.date || '';
+      if (event.classList.contains('hidden')) {
+        dateEl.textContent = dateEl.dataset.original ?? dateEl.textContent;
+        return;
+      }
+      if (cardDate !== lastVisibleDate) {
+        dateEl.textContent = cardDate;
+        lastVisibleDate = cardDate;
+      } else {
+        dateEl.textContent = '';
+      }
+    });
+  }
+
+  function saveOriginalDates() {
+    document.querySelectorAll('.event-date').forEach(el => {
+      if (el.dataset.original === undefined) el.dataset.original = el.textContent;
+    });
+  }
+
+  function restoreOriginalDates() {
+    document.querySelectorAll('.event-date').forEach(el => {
+      if (el.dataset.original !== undefined) el.textContent = el.dataset.original;
+    });
+  }
+
+  saveOriginalDates();
+
+  function applyFilter(tag) {
+    activeFilter = tag;
+    filterTag.textContent = tag;
+    filterBar.classList.add('active');
+    document.querySelectorAll('.event').forEach(event => {
+      event.classList.toggle('hidden', !event.textContent.includes(tag));
+    });
+    document.querySelectorAll('.month-section').forEach(section => {
+      const visibleEvents = section.querySelectorAll('.event:not(.hidden)');
+      section.classList.toggle('all-hidden', visibleEvents.length === 0);
+      if (visibleEvents.length > 0) section.classList.remove('collapsed');
+    });
+    updateDateDisplay();
+  }
+
+  function clearFilter() {
+    activeFilter = null;
+    filterBar.classList.remove('active');
+    document.querySelectorAll('.event').forEach(e => e.classList.remove('hidden'));
+    document.querySelectorAll('.month-section').forEach(s => s.classList.remove('all-hidden'));
+    document.querySelectorAll('.legend-item').forEach(el => el.classList.remove('active'));
+    restoreOriginalDates();
+  }
+
+  // UPCOMING + 컴백 D-day
+  (function() {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const todayVal = month * 100 + day;
+
+    document.getElementById('todayDate').textContent = '';
+
+    const container = document.getElementById('todayEvents');
+    const items = [];
+
+    // 컴백 D-day 아이템
+    const comeback = new Date('2026-04-13T18:00:00+09:00');
+    const diffDays = Math.floor((comeback - now) / (1000 * 60 * 60 * 24));
+    let dLabel;
+    if (diffDays > 0) dLabel = 'D-' + diffDays;
+    else if (diffDays === 0) dLabel = 'D-DAY';
+    else dLabel = 'D+' + Math.abs(diffDays);
+
+    const ddayItem = document.createElement('div');
+    ddayItem.className = 'today-item album';
+    ddayItem.innerHTML = '<span class="today-item-dday">' + dLabel + '</span>'
+      + '<span class="today-item-title">7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 발매</span>'
+      + '<span class="today-item-arrow">↓</span>';
+    ddayItem.addEventListener('click', () => {
+      const section = document.querySelector('.month-section[data-month="4"]');
+      if (section && section.classList.contains('collapsed')) section.classList.remove('collapsed');
+      setTimeout(() => {
+        const target = Array.from(document.querySelectorAll('.event-title'))
+          .find(el => el.textContent.includes('가시덤불에 잠시 바람이 멈췄을 때 - 발매'));
+        if (target) {
+          const ev = target.closest('.event');
+          ev.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          ev.style.transition = 'background 0.3s';
+          ev.style.background = 'rgba(170,255,0,0.08)';
+          setTimeout(() => { ev.style.background = ''; }, 1200);
+        }
+      }, 350);
+    });
+    items.push(ddayItem);
+
+    // 다가오는 이벤트 수집
+    const parseDate = s => { const p = s.trim().split('.'); return { m: parseInt(p[0]), d: parseInt(p[1]) }; };
+    const upcoming = [];
+
+    document.querySelectorAll('.event').forEach((ev, i) => {
+      const dateEl = ev.querySelector('.event-date');
+      const dateText = dateEl ? dateEl.dataset.original || dateEl.textContent.trim() : '';
+      if (!dateText) return;
+
+      const rangeParts = dateText.split(/[–\-]/);
+      const start = parseDate(rangeParts[0]);
+      const startVal = start.m * 100 + start.d;
+      let endVal = startVal;
+      if (rangeParts.length > 1) {
+        const endStr = rangeParts[1].trim();
+        const end = endStr.includes('.') ? parseDate(endStr) : { m: start.m, d: parseInt(endStr) };
+        endVal = end.m * 100 + end.d;
+      }
+
+      if (endVal < todayVal) return;
+      if (startVal > todayVal + 1) return; // 오늘/내일만
+
+      const card = ev.querySelector('.event-card');
+      const titleEl = ev.querySelector('.event-title');
+      if (!card || !titleEl) return;
+      if (titleEl.textContent.includes('가시덤불에 잠시 바람이 멈췄을 때 - 발매')) return;
+
+      const descEl = ev.querySelector('.event-desc');
+      const descText = descEl ? descEl.textContent : '';
+      const timeMatch = descText.match(/(?:오전|오후)\s*\d+:\d+/);
+      const timeStr = timeMatch ? timeMatch[0] : '';
+
+      const diffFromToday = startVal - todayVal;
+      let dateLabel;
+      if (diffFromToday <= 0) dateLabel = '오늘';
+      else if (diffFromToday === 1) dateLabel = '내일';
+      else dateLabel = start.m + '/' + start.d;
+
+      upcoming.push({ ev, i, startVal, titleEl, card, timeStr, dateLabel });
+    });
+
+    upcoming.sort((a, b) => a.startVal - b.startVal);
+    upcoming.forEach(({ ev, i, titleEl, card, timeStr, dateLabel }) => {
+      const cardClass = Array.from(card.classList).find(c =>
+        ['concert','album','promo','japan','anniversary'].includes(c)
+      ) || 'promo';
+
+      ev.id = 'ev-today-' + i;
+      const item = document.createElement('div');
+      item.className = 'today-item ' + cardClass;
+      item.innerHTML = '<span class="today-item-date">' + dateLabel + '</span>'
+        + (timeStr ? '<span class="today-item-time">' + timeStr + '</span>' : '')
+        + '<span class="today-item-title">' + titleEl.textContent.trim() + '</span>'
+        + '<span class="today-item-arrow">↓</span>';
+      item.addEventListener('click', () => {
+        const section = ev.closest('.month-section');
+        if (section && section.classList.contains('collapsed')) section.classList.remove('collapsed');
+        setTimeout(() => {
+          ev.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          ev.style.transition = 'background 0.3s';
+          ev.style.background = 'rgba(255,45,155,0.08)';
+          setTimeout(() => { ev.style.background = ''; }, 1200);
+        }, 350);
+      });
+      items.push(item);
+    });
+
+    container.innerHTML = '';
+    items.forEach(item => container.appendChild(item));
+  })();
+
+  // 배너 D-day 텍스트
+  (function() {
+    const target = new Date('2026-04-13T18:00:00+09:00');
+    const diff = Math.floor((target - new Date()) / (1000 * 60 * 60 * 24));
+    const el = document.getElementById('bannerTitle');
+    if (!el) return;
+    if (diff > 0) el.textContent = '재계약 후 첫 컴백 D-' + diff;
+    else if (diff === 0) el.textContent = '재계약 후 첫 컴백 D-DAY 🌿';
+    else el.textContent = '재계약 후 첫 컴백 D+' + Math.abs(diff);
+  })();
+
+</script>
+</body>
+</html>
