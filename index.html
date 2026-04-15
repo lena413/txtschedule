@@ -69,8 +69,8 @@
   .today-item.album:hover { border-color: var(--album); }
   .today-item.promo { border-left: 3px solid var(--promo); }
   .today-item.promo:hover { border-color: var(--promo); }
-  .today-item.japan { border-left: 3px solid var(--japan); }
-  .today-item.japan:hover { border-color: var(--japan); }
+  .today-item.live { border-left: 3px solid var(--live); }
+  .today-item.live:hover { border-color: var(--live); }
   .today-item.anniversary { border-left: 3px solid var(--anniversary); }
   .today-item.anniversary:hover { border-color: var(--anniversary); }
 
@@ -101,7 +101,7 @@
   .today-item.concert .today-item-date { color: var(--concert); }
   .today-item.album .today-item-date { color: var(--album); }
   .today-item.promo .today-item-date { color: var(--promo); }
-  .today-item.japan .today-item-date { color: var(--japan); }
+  .today-item.live .today-item-date { color: var(--live); }
   .today-item.anniversary .today-item-date { color: var(--anniversary); }
 
   .today-item-time {
@@ -215,7 +215,7 @@
     --concert: #ff2d9b;   /* 형광 핑크 — 콘서트 */
     --album: #aaff00;     /* 형광 그린 — 앨범/컴백 */
     --promo: #f5c800;     /* 옐로우 — 프로모션 */
-    --japan: #9b5fd4;     /* 보라 — 위버스/SNS */
+    --live: #9b5fd4;     /* 보라 — 위버스/SNS */
     --anniversary: #9b5fd4; /* 보라 — 기념일 */
   }
 
@@ -548,17 +548,17 @@
   .event-card.concert { border-left: 3px solid var(--concert); }
   .event-card.album { border-left: 3px solid var(--album); }
   .event-card.promo { border-left: 3px solid var(--promo); }
-  .event-card.japan { border-left: 3px solid var(--japan); }
+  .event-card.live { border-left: 3px solid var(--live); }
 
   .event-card.concert:hover { border-color: var(--concert); }
   .event-card.album:hover { border-color: var(--album); }
   .event-card.promo:hover { border-color: var(--promo); }
-  .event-card.japan:hover { border-color: var(--japan); }
+  .event-card.live:hover { border-color: var(--live); }
 
   .event-dot.concert { border-color: var(--concert); }
   .event-dot.album { border-color: var(--album); }
   .event-dot.promo { border-color: var(--promo); }
-  .event-dot.japan { border-color: var(--japan); }
+  .event-dot.live { border-color: var(--live); }
 
   .event-type-badge {
     display: inline-block;
@@ -599,7 +599,7 @@
   .badge-concert { background: rgba(255,45,155,0.25); color: #ff2d9b; border: 1px solid rgba(255,45,155,0.45); }
   .badge-album { background: rgba(170,255,0,0.13); color: var(--album); }
   .badge-promo { background: rgba(245,200,0,0.13); color: var(--promo); }
-  .badge-japan { background: rgba(155,95,212,0.15); color: var(--japan); }
+  .badge-live { background: rgba(155,95,212,0.15); color: var(--live); }
 
   .event-title {
     font-size: 15px;
@@ -750,7 +750,7 @@
   .event-link:hover { opacity: 1; }
 
   /* 추가 뱃지 */
-  .badge-solo { background: rgba(155,95,212,0.15); color: var(--japan); }
+  .badge-solo { background: rgba(155,95,212,0.15); color: var(--live); }
 
   /* 푸터 */
   footer {
@@ -848,8 +848,8 @@
 <div class="legend-dot" style="background:var(--promo)"></div>
       프로모션/콘텐츠
     </div>
-<div class="legend-item" data-category="japan">
-<div class="legend-dot" style="background:var(--japan)"></div>
+<div class="legend-item" data-category="live">
+<div class="legend-dot" style="background:var(--live)"></div>
       위버스/SNS
     </div>
 </div>
@@ -1731,7 +1731,7 @@ const EVENTS = [
   {
     "month": 4,
     "date": "4.12",
-    "category": "japan",
+    "category": "live",
     "badge": "LIVE",
     "title": "도우인 공식 라이브 스트리밍",
     "desc": "오후 3:30 (KST) · #연준 · #휴닝카이",
@@ -1786,8 +1786,8 @@ const EVENTS = [
   {
     "month": 4,
     "date": "4.14",
-    "category": "promo",
-    "badge": "PROMOTION",
+    "category": "live",
+    "badge": "LIVE",
     "title": "D+1 컴백라이브",
     "desc": "오후 8:00",
     "links": [
@@ -1796,6 +1796,16 @@ const EVENTS = [
         "url": "https://x.com/txt_bighit/status/2043683120470188306?s=46"
       }
     ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.15",
+    "category": "live",
+    "badge": "LIVE",
+    "title": "YouTube Live",
+    "desc": "오후 5:00",
+    "links": [],
     "comeback": false
   },
   {
@@ -1824,6 +1834,21 @@ const EVENTS = [
       {
         "text": "→ 위버스 공지 바로가기",
         "url": "https://weverse.io/txt/notice/34557"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.15",
+    "category": "promo",
+    "badge": "PERFORMANCE",
+    "title": "GQ Performance",
+    "desc": "오후 8:00",
+    "links": [
+      {
+        "text": "→ 인스타그램 바로가기",
+        "url": "https://www.instagram.com/reel/DXHOrk2kQMB/?igsh="
       }
     ],
     "comeback": false
@@ -2559,7 +2584,7 @@ const EVENTS = [
     upcoming.sort((a, b) => a.startVal - b.startVal);
     upcoming.forEach(({ ev, i, titleEl, card, timeStr, dateLabel }) => {
       const cardClass = Array.from(card.classList).find(c =>
-        ['concert','album','promo','japan','anniversary'].includes(c)
+        ['concert','album','promo','live','anniversary'].includes(c)
       ) || 'promo';
 
       ev.id = 'ev-today-' + i;
