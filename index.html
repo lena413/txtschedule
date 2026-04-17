@@ -1815,7 +1815,7 @@ const EVENTS = [
     "category": "live",
     "badge": "LIVE",
     "title": "툽캐스트 깜짝 LIVE",
-    "desc": "오후 5:00",
+    "desc": "오후 5:00 · #툽캐스트",
     "links": [
       {
         "text": "→ 공식 X 바로가기",
@@ -1829,12 +1829,12 @@ const EVENTS = [
     "date": "4.15",
     "category": "promo",
     "badge": "PROMOTION",
-    "title": "픽시드 (PIXID)",
+    "title": "신인 아이돌 사이에 숨은 가짜 찾기 | TXT 범규&휴닝카이 | THE qUEST",
     "desc": "오후 6:00 · #범규 · #휴닝카이",
     "links": [
       {
-        "text": "→ 공식 X 바로가기",
-        "url": "https://x.com/pixid_official/status/2043509478331670809?s=46"
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/pc1eQYxqNow"
       }
     ],
     "comeback": false
@@ -1860,11 +1860,11 @@ const EVENTS = [
     "category": "promo",
     "badge": "PERFORMANCE",
     "title": "GQ Performance",
-    "desc": "오후 8:00",
+    "desc": "오후 8:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
     "links": [
       {
-        "text": "→ 인스타그램 바로가기",
-        "url": "https://www.instagram.com/reel/DXHOrk2kQMB/?igsh="
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/gSHObxyBGJA"
       }
     ],
     "comeback": false
@@ -1876,7 +1876,12 @@ const EVENTS = [
     "badge": "BROADCAST",
     "title": "엠카운트다운",
     "desc": "Mnet · 오후 6:00 · #7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때",
-    "links": [],
+    "links": [
+      {
+        "text": "→ 유튜브 바로가기",
+        "url": "https://youtu.be/z_7MDMsUd-4?si=0aNt_3EHzavekPbT"
+      }
+    ],
     "comeback": false
   },
   {
@@ -1927,6 +1932,21 @@ const EVENTS = [
     "title": "아이돌 인간극장",
     "desc": "오후 9:00",
     "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
+    "date": "4.18",
+    "category": "live",
+    "badge": "LIVE",
+    "title": "위버스 리스닝파티 DAY 1",
+    "desc": "오전 11:00",
+    "links": [
+      {
+        "text": "→ 리스닝파티 바로가기",
+        "url": "https://listening-party.weverse.io/txt/wlp/0-172807285?hl=ko"
+      }
+    ],
     "comeback": false
   },
   {
@@ -2001,6 +2021,16 @@ const EVENTS = [
   },
   {
     "month": 4,
+    "date": "4.21",
+    "category": "live",
+    "badge": "LIVE",
+    "title": "위버스 리스닝파티 DAY 2",
+    "desc": "오후 4:00 · 아티스트 참여 예정",
+    "links": [],
+    "comeback": false
+  },
+  {
+    "month": 4,
     "date": "4.22",
     "category": "album",
     "badge": "PHOTO EVENT",
@@ -2032,10 +2062,10 @@ const EVENTS = [
   {
     "month": 4,
     "date": "4.22",
-    "category": "live",
-    "badge": "LIVE",
+    "category": "promo",
+    "badge": "CONTENTS",
     "title": "하루에 하루만 더 상담소 | 툽캐스트 Teaser",
-    "desc": "오후 7:00",
+    "desc": "오후 7:00 · #툽캐스트",
     "links": [],
     "comeback": false
   },
@@ -2106,6 +2136,25 @@ const EVENTS = [
   },
   {
     "month": 4,
+    "date": "4.25",
+    "category": "album",
+    "badge": "FAN SIGNING",
+    "title": "7TH YEAR: 가시덤불에 잠시 바람이 멈췄을 때 - 포토 이벤트 & 팬사인회",
+    "desc": "케이타운포유 · 포토 이벤트 오후 6:00 / 팬사인회 오후 7:30",
+    "links": [
+      {
+        "text": "→ 포토 이벤트 공지",
+        "url": "https://weverse.io/txt/notice/34766"
+      },
+      {
+        "text": "→ 팬사인회 공지",
+        "url": "https://weverse.io/txt/notice/34765"
+      }
+    ],
+    "comeback": false
+  },
+  {
+    "month": 4,
     "date": "4.26",
     "category": "album",
     "badge": "BROADCAST",
@@ -2127,10 +2176,10 @@ const EVENTS = [
   {
     "month": 4,
     "date": "4.29",
-    "category": "live",
-    "badge": "LIVE",
+    "category": "promo",
+    "badge": "CONTENTS",
     "title": "하루에 하루만 더 상담소 | 툽캐스트 EP.1",
-    "desc": "오후 7:00",
+    "desc": "오후 7:00 · #툽캐스트",
     "links": [],
     "comeback": false
   },
@@ -2544,6 +2593,38 @@ const EVENTS = [
   }
 
   saveOriginalDates();
+
+  // 오늘 날짜 하이라이트
+  (function() {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const day = now.getDate();
+    const todayVal = month * 100 + day;
+
+    document.querySelectorAll('.event').forEach(ev => {
+      const dateEl = ev.querySelector('.event-date');
+      const dateText = dateEl ? dateEl.dataset.original || '' : '';
+      if (!dateText) return;
+
+      const parseDate = s => { const p = s.trim().split('.'); return { m: parseInt(p[0]), d: parseInt(p[1]) }; };
+      const rangeParts = dateText.split(/[–\-]/);
+      const start = parseDate(rangeParts[0]);
+      const startVal = start.m * 100 + start.d;
+      let endVal = startVal;
+      if (rangeParts.length > 1) {
+        const endStr = rangeParts[1].trim();
+        const end = endStr.includes('.') ? parseDate(endStr) : { m: start.m, d: parseInt(endStr) };
+        endVal = end.m * 100 + end.d;
+      }
+
+      if (todayVal >= startVal && todayVal <= endVal) {
+        if (dateEl && dateEl.textContent.trim()) {
+          dateEl.style.color = 'var(--accent)';
+          dateEl.style.fontWeight = '700';
+        }
+      }
+    });
+  })();
 
   function applyFilter(tag) {
     activeFilter = tag;
